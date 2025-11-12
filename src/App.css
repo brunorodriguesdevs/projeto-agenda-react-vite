@@ -1,0 +1,9 @@
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #111827;
+  color: #E5E7EB;
+}
+
+input, button {
+  transition: all 0.3s ease;
+}
