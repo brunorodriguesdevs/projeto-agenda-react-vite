@@ -1,16 +1,27 @@
-export default function Button({ text }) {
+/**
+ * Button.jsx — Botão padrão do aplicativo
+ *
+ * Reaproveitado em todo o app para garantir consistência de design.
+ *
+ * Boas práticas:
+ * - Usa cor temática (neon azul)
+ * - Acessível (role="button", foco visível)
+ * - Suporte a diferentes tipos (submit, button)
+ */
+
+import React from "react";
+
+export default function Button({ text, onClick, type = "button" }) {
   return (
     <button
-      type="submit"
-      className="w-full bg-gradient-to-r from-[#00B4D8] to-[#0077B6] 
-      text-white font-semibold py-2.5 rounded-xl transition-all duration-300 
-      hover:from-[#48CAE4] hover:to-[#00B4D8] 
-      hover:shadow-[0_0_15px_#00B4D8] 
-      hover:scale-[1.04] active:scale-[0.98] 
-      shadow-[0_0_10px_#00B4D8]/40"
+      type={type}
+      onClick={onClick}
+      role="button"
+      className="px-4 py-2 rounded-xl bg-[#00b4d8]/20 border border-[#00b4d8]/40
+        text-[#00b4d8] font-semibold hover:bg-[#00b4d8]/30
+        focus:outline-none focus:ring-2 focus:ring-[#00b4d8]/40 transition"
     >
       {text}
     </button>
   );
 }
-

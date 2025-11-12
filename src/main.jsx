@@ -1,23 +1,17 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import { HashRouter, Routes, Route } from "react-router-dom";
 import App from "./App.jsx";
-import "./index.css";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import TaskPage from "./pages/TaskPage.jsx";
-
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <App />,
-  },
-  {
-    path: "/task",
-    element: <TaskPage />,
-  },
-]);
+import "./index.css";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <HashRouter>
+      <Routes>
+        <Route path="/" element={<App />} />
+        <Route path="/task" element={<TaskPage />} />
+      </Routes>
+    </HashRouter>
   </StrictMode>
 );

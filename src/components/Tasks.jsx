@@ -1,138 +1,124 @@
-import { CheckCircle, Circle, Trash2, Edit, Save, X } from "lucide-react";
-import { useState } from "react";
+/**
+ * Tasks.jsx — Lista de tarefas
+ *
+ * Responsável por:
+ * - Exibir todas as tarefas filtradas e ordenadas
+ * - Permitir ações: concluir, editar e excluir
+ *
+ * Boas práticas:
+ * - Usa ícones claros e acessíveis
+ * - Destaca tarefas concluídas visualmente
+ * - Mantém a lista simples, mas moderna
+ */
+
+import React, { useState } from "react";
 
 export default function Tasks({ tasks, toggleTask, deleteTask, editTask }) {
   const [editingId, setEditingId] = useState(null);
-  const [editData, setEditData] = useState({ title: "", description: "", time: "" });
+  const [editValue, setEditValue] = useState("");
 
+  /** Inicia modo de edição */
   const startEdit = (task) => {
     setEditingId(task.id);
-    setEditData({
-      title: task.title,
-      description: task.description,
-      time: task.time || "",
-    });
+    setEditValue(task.title);
   };
 
-  const saveEdit = () => {
-    editTask(editingId, editData);
+  /** Confirma alteração */
+  const saveEdit = (id) => {
+    if (!editValue.trim()) return;
+    editTask(id, { title: editValue });
     setEditingId(null);
+  };
+
+  /** Cancela modo de edição */
+  const cancelEdit = () => {
+    setEditingId(null);
+    setEditValue("");
   };
 
   if (tasks.length === 0)
     return (
-      <div className="text-center text-gray-500 mt-6 animate-pulse">
-        Nenhuma tarefa adicionada ainda 😴
-      </div>
+      <p className="text-center text-gray-400 italic">
+        Nenhuma tarefa encontrada 🔎
+      </p>
     );
 
   return (
-    <div className="space-y-4">
+    <ul className="flex flex-col gap-3">
       {tasks.map((task) => (
-        <div
+        <li
           key={task.id}
-          className={`relative flex flex-col gap-3 bg-[#0B1120] border border-blue-900/50 hover:border-[#00B4D8] 
-          rounded-xl p-5 shadow-md shadow-blue-900/20 transition-all duration-300 ${
+          className={`flex justify-between items-center p-4 rounded-xl border transition 
+          ${
             task.done
-              ? "opacity-80 scale-[0.99] border-green-600/40"
-              : "hover:shadow-[#00B4D8]/30"
+              ? "bg-[#042b20]/50 border-green-400/20 line-through text-gray-400"
+              : "bg-[#0c1625]/60 border-[#00b4d8]/20"
           }`}
         >
-          {editingId === task.id ? (
-            <>
-              {/* Edição */}
+          <div className="flex-1 min-w-0">
+            {editingId === task.id ? (
               <input
-                value={editData.title}
-                onChange={(e) => setEditData({ ...editData, title: e.target.value })}
-                className="w-full bg-[#1E293B] border border-gray-700 rounded-lg p-2 text-gray-100 focus:border-[#00B4D8] focus:ring-1 focus:ring-[#00B4D8] outline-none"
-                placeholder="Título"
+                className="w-full px-2 py-1 rounded-lg text-black"
+                value={editValue}
+                onChange={(e) => setEditValue(e.target.value)}
+                onBlur={() => saveEdit(task.id)}
+                autoFocus
               />
-              <textarea
-                value={editData.description}
-                onChange={(e) =>
-                  setEditData({ ...editData, description: e.target.value })
-                }
-                className="w-full bg-[#1E293B] border border-gray-700 rounded-lg p-2 text-gray-100 focus:border-[#00B4D8] focus:ring-1 focus:ring-[#00B4D8] outline-none"
-                placeholder="Descrição"
-              />
-              <input
-                type="time"
-                value={editData.time}
-                onChange={(e) => setEditData({ ...editData, time: e.target.value })}
-                className="w-full bg-[#1E293B] border border-gray-700 rounded-lg p-2 text-gray-100 focus:border-[#00B4D8] focus:ring-1 focus:ring-[#00B4D8] outline-none"
-              />
+            ) : (
+              <>
+                <h3 className="font-semibold break-words">{task.title}</h3>
+                {task.description && (
+                  <p className="text-sm text-gray-400">{task.description}</p>
+                )}
+                {task.date && (
+                  <p className="text-xs text-gray-500 mt-1">
+                    📅 {task.date} {task.time && `⏰ ${task.time}`}
+                  </p>
+                )}
+              </>
+            )}
+          </div>
 
-              <div className="flex justify-end gap-3 mt-3">
-                <button
-                  onClick={saveEdit}
-                  className="flex items-center gap-2 px-3 py-1 bg-[#00B4D8] hover:bg-[#0096C7] text-white rounded-lg transition"
-                >
-                  <Save size={16} /> Salvar
-                </button>
-                <button
-                  onClick={() => setEditingId(null)}
-                  className="flex items-center gap-2 px-3 py-1 bg-gray-700 hover:bg-gray-600 text-gray-200 rounded-lg transition"
-                >
-                  <X size={16} /> Cancelar
-                </button>
-              </div>
-            </>
-          ) : (
-            <>
-              {/* Visualização */}
-              <div
-                className="flex items-start justify-between cursor-pointer select-none"
-                onClick={() => toggleTask(task.id)}
+          <div className="flex gap-2 ml-3">
+            {/* Alternar status */}
+            <button
+              onClick={() => toggleTask(task.id)}
+              title="Concluir tarefa"
+              className="text-green-400 hover:text-green-300"
+            >
+              {task.done ? "✔️" : "✅"}
+            </button>
+
+            {/* Editar */}
+            {editingId === task.id ? (
+              <button
+                onClick={cancelEdit}
+                title="Cancelar edição"
+                className="text-yellow-400 hover:text-yellow-300"
               >
-                <div className="flex items-start gap-3">
-                  {task.done ? (
-                    <CheckCircle
-                      size={22}
-                      className="text-green-400 cursor-pointer hover:scale-110 transition"
-                    />
-                  ) : (
-                    <Circle
-                      size={22}
-                      className="text-gray-500 cursor-pointer hover:text-[#00B4D8] hover:scale-110 transition"
-                    />
-                  )}
-                  <div>
-                    <h3
-                      className={`text-lg font-semibold tracking-tight ${
-                        task.done
-                          ? "text-green-400 line-through"
-                          : "text-[#00B4D8]"
-                      }`}
-                    >
-                      {task.title}
-                    </h3>
-                    <p className="text-gray-400">{task.description}</p>
-                    {task.time && (
-                      <p className="text-xs text-gray-500 mt-1">⏰ {task.time}</p>
-                    )}
-                  </div>
-                </div>
-              </div>
+                ✖
+              </button>
+            ) : (
+              <button
+                onClick={() => startEdit(task)}
+                title="Editar tarefa"
+                className="text-yellow-400 hover:text-yellow-300"
+              >
+                ✏️
+              </button>
+            )}
 
-              <div className="flex justify-end gap-3 mt-3">
-                <button
-                  onClick={() => startEdit(task)}
-                  className="flex items-center gap-2 px-3 py-1 bg-[#0077B6] hover:bg-[#00B4D8] text-white rounded-lg transition"
-                >
-                  <Edit size={16} /> Editar
-                </button>
-                <button
-                  onClick={() => deleteTask(task.id)}
-                  className="flex items-center gap-2 px-3 py-1 bg-red-600 hover:bg-red-700 text-white rounded-lg transition"
-                >
-                  <Trash2 size={16} /> Excluir
-                </button>
-              </div>
-            </>
-          )}
-        </div>
+            {/* Excluir */}
+            <button
+              onClick={() => deleteTask(task.id)}
+              title="Excluir tarefa"
+              className="text-red-400 hover:text-red-300"
+            >
+              🗑️
+            </button>
+          </div>
+        </li>
       ))}
-    </div>
+    </ul>
   );
 }
-

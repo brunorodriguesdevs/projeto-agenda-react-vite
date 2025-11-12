@@ -1,25 +1,38 @@
-export default function Input({ label, value, onChange }) {
+/**
+ * Input.jsx — Campo de formulário reutilizável
+ *
+ * Objetivo:
+ * Facilitar a consistência visual e acessibilidade dos inputs do app.
+ * 
+ * Boas práticas:
+ * - Controlado via props (value, onChange, type)
+ * - Label opcional para acessibilidade
+ * - Design responsivo e foco suave
+ */
+
+import React from "react";
+
+export default function Input({
+  label,
+  type = "text",
+  value,
+  onChange,
+  placeholder,
+  required,
+}) {
   return (
-    <div className="relative">
+    <label className="flex flex-col text-sm font-medium text-gray-200">
+      {label && <span className="mb-1">{label}</span>}
       <input
-        type="text"
+        type={type}
         value={value}
         onChange={onChange}
-        className="peer w-full border-b-2 border-[#00B4D8]/50 bg-transparent pt-4 pb-1 
-        text-gray-100 placeholder-transparent outline-none 
-        focus:border-[#00B4D8] transition-all duration-300
-        focus:shadow-[0_2px_10px_#00B4D8]"
-        placeholder=" "
+        placeholder={placeholder}
+        required={required}
+        className="px-3 py-2 rounded-xl bg-[#0b1420] border border-[#00b4d8]/20
+          placeholder-gray-400 text-gray-100 focus:outline-none focus:ring-2
+          focus:ring-[#00b4d8]/40 transition"
       />
-      <label
-        className="absolute left-0 top-1 text-gray-400 text-sm transition-all duration-300 
-        peer-placeholder-shown:top-4 peer-placeholder-shown:text-gray-500 
-        peer-focus:top-1 peer-focus:text-[#00B4D8]"
-      >
-        {label}
-      </label>
-    </div>
+    </label>
   );
 }
-
-
